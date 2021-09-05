@@ -1,0 +1,78 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% load social_share %}
+{% block content %}
+   <div class="row">
+     <div class="col">
+        <article class="media content-section">
+          <img src="{{post.author.profile.image.url}}" class="rounded-circle article-img">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+              <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+              {% if object.author == user %}
+              <a class="btn btn-sm btn-secondary my-1" href="{% url 'post-update' object.id%}">Update</a>
+              <a class="btn btn-sm btn-danger my-1" href="{% url 'post-delete' object.id%}">Delete</a>
+              {% endif %}
+            </div>
+            <h2 class="article-title" >{{ object.title }}</h2>
+            <p class="article-content">{{ object.content|safe }}</p>
+          </div>
+          
+          <br/></br>
+         
+        </article>
+        <div class="col"></div>
+      </div>
+      </div>
+
+      
+           
+         </div>
+         <div class="col"></div>
+         </div>
+       
+      <form action="{% url 'like-post' object.pk %}" method="POST">
+        {% csrf_token %}
+        {% if user.is_authenticated %}
+          {% if liked %}
+            <button class="btn btn-sm btn-danger" type="submit" name="post_id" value="{{object.id}}">UnLike </button>
+          {% else %}
+            <button class="btn btn-sm btn-primary" type="submit" name="post_id" value="{{object.id}}">Like </button>
+          {% endif %}
+        {% else %}
+        <a  href="{% url 'login' %}">Login</a> to Like
+        {% endif %}
+        - {{ total_likes }} Likes
+      </form>      
+
+
+        <h2>Comments</h2>
+       
+        {% if not object.comments.all %}
+          N0 Comments yet <a href="{% url 'add-comment' object.id %}">add one</a> 
+        {% else %}
+          <br/><br/>
+          <a href="{% url 'add-comment' object.id %}">add a comment</a>
+          <br/><br/>
+         
+          {% for comment in object.comments.all %}
+          <article class="media content-section">
+            <img src="{{comment.name.profile.image.url}}" class="rounded-circle article-img">
+            <div class="media-body">
+              <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' comment.name.username %}">{{ comment.name }}</a>
+                <small class="text-muted">{{ comment.date_added|date:"F d, Y"  }}</small>
+              </div>
+              
+              
+              <p class = "article-content">
+                {{ comment.body|safe }}
+                
+              </p>
+            </div>
+          </article>
+          {% endfor %}
+        {% endif %}
+    
+{% endblock content %}
