@@ -22,14 +22,7 @@ def LikeView(request,pk):
     return HttpResponseRedirect(reverse('post-detail',args=[str(pk)]))
 
 
-def home(request):
-    context = {
-        'posts':post.objects.all()
-    }
-    return render(request,'home/index.html',context)
 
-def about(request):
-    return render(request,'home/index.html')
 
 class PostListView(ListView):
     model = post
